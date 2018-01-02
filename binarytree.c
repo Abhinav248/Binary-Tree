@@ -1,4 +1,4 @@
-# Binary-Tree
+# Binary Tree
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -49,6 +49,7 @@ struct node *deletegivennode(struct node *start,int data);
 int roottoleafsumcheck(struct node *root, int sum);
 int isBST(struct node *root, int minm, int maxm);
 struct node *leastcommonancestor(struct node *root, int node1, int node2);
+int isMirrorImage(struct node *root1, struct node *root2);
 
 int main()
 {
@@ -63,6 +64,7 @@ int main()
         printf("8 to count no. of nodes\n9 to print tree top view data\n10 to find the height of a node\n11 to find the maximum data in tree");
         printf("\n12 to delete a given node \n13 to check root to leaf sum is present or not\n14 to check if tree is BST or not");
         printf("\n15 for Morris Inorder Traversal\n16 to check if two binary tree is same or not\n17 to find least common ancestor\n");
+        printf("18 to check for mirror image trees\n\n");
         scanf("%d",&choice);
         switch(choice)
         {
@@ -226,6 +228,14 @@ int main()
             else
                 printf("\nleast common ancestor doesn't exist\n");
             break;
+        case 18:
+            printf("\nEnter 2 root no from 1 to 10\n");
+            scanf("%d%d",&r1,&r2);
+            if(isMirrorImage(root[r1-1],root[r2-1]))
+                printf("\nMirror Image of each other\n");
+            else
+                printf("\nnot Mirror Image of each other\n");
+            break;
         default:
             printf("\nyou entered wrong a choice\n\n");
         }
@@ -363,7 +373,7 @@ void iterativepostorder(struct node *root)
             push(s1,root->rchild);
     }
     while(!isEmpty(s2))
-        printf("%d\n",pop(s2)->data);
+        printf("%d\n",(pop(s2))->data);
 }
 */
 
@@ -946,3 +956,12 @@ struct node *leastcommonancestor(struct node *root, int node1, int node2)
         return (lt)?lt:rt;
 }
 
+
+int isMirrorImage(struct node *root1, struct node *root2)
+{
+    if(root1==NULL && root2==NULL)
+        return 1;
+    if(root1==NULL || root2==NULL)
+        return 0;
+    return root1->data==root2->data && (isMirrorImage(root1->lchild,root2->rchild) && isMirrorImage(root1->rchild,root2->lchild));
+}

@@ -50,6 +50,9 @@ int roottoleafsumcheck(struct node *root, int sum);
 int isBST(struct node *root, int minm, int maxm);
 struct node *leastcommonancestor(struct node *root, int node1, int node2);
 int isMirrorImage(struct node *root1, struct node *root2);
+int diameter(struct node *root);
+int Max(int x, int y);
+struct node *Tree_clone(struct node* root);
 
 int main()
 {
@@ -64,7 +67,7 @@ int main()
         printf("8 to count no. of nodes\n9 to print tree top view data\n10 to find the height of a node\n11 to find the maximum data in tree");
         printf("\n12 to delete a given node \n13 to check root to leaf sum is present or not\n14 to check if tree is BST or not");
         printf("\n15 for Morris Inorder Traversal\n16 to check if two binary tree is same or not\n17 to find least common ancestor\n");
-        printf("18 to check for mirror image trees\n\n");
+        printf("18 to check for mirror image trees\n19 to find diameter of a tree\n20 to clone a BST\n\n");
         scanf("%d",&choice);
         switch(choice)
         {
@@ -235,6 +238,17 @@ int main()
                 printf("\nMirror Image of each other\n");
             else
                 printf("\nnot Mirror Image of each other\n");
+            break;
+        case 19:
+            printf("\nEnter root no from 1 to 10\n");
+            scanf("%d",&r);
+            printf("\nDiameter of tree = %d\n",diameter(root[r-1]));
+            break;
+        case 20:
+            printf("\nEnter tree root no. to be cloned\n");
+            scanf("%d",&r);
+            root[9]=Tree_clone(root[r-1]);
+            levelorder(root[9]);
             break;
         default:
             printf("\nyou entered wrong a choice\n\n");
@@ -964,4 +978,35 @@ int isMirrorImage(struct node *root1, struct node *root2)
     if(root1==NULL || root2==NULL)
         return 0;
     return root1->data==root2->data && (isMirrorImage(root1->lchild,root2->rchild) && isMirrorImage(root1->rchild,root2->lchild));
+}
+
+
+int diameter(struct node *root)
+{
+    int lt,rt,ld,rd;
+    if(root==NULL)
+        return 0;
+    lt=height(root->lchild);
+    rt=height(root->rchild);
+    ld=diameter(root->lchild);
+    rd=diameter(root->rchild);
+    return Max(lt+rt+1,Max(ld,rd));
+}
+
+int Max(int x, int y)
+{
+    return (x>y)?x:y;
+}
+
+
+struct node *Tree_clone(struct node* root)
+{
+    if(!root)
+        return NULL;
+    struct node *temp;
+    temp=(struct node*)malloc(sizeof(struct node));
+    temp->data=root->data;
+    temp->lchild=Tree_clone(root->lchild);
+    temp->rchild=Tree_clone(root->rchild);
+    return temp;
 }

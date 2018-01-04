@@ -1,4 +1,4 @@
-# Binary Tree
+#Binary Tree
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -66,7 +66,6 @@ void printViews(struct list *head);
 
 int main()
 {
-    printf("BINARY TREE\n\n");	
     struct node *root[10],*temp;
     int choice,data,nodedata,item,sum,res,i,r,r1,r2,data1,data2;
     for(i=0;i<10;i++)

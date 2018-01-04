@@ -5,12 +5,18 @@
 #include<limits.h>
 #define max 1000
 
-int nodecount, flag=0;
+int c,nodecount, flag=0;
 
 struct node {
 int data;
 struct node *lchild;
 struct node *rchild;
+};
+
+struct list
+{
+	int val;
+	struct list *next;
 };
 
 void treetraversal(struct node *root);
@@ -53,9 +59,14 @@ int isMirrorImage(struct node *root1, struct node *root2);
 int diameter(struct node *root);
 int Max(int x, int y);
 struct node *Tree_clone(struct node* root);
+void View_Tree(struct node *root);
+struct list *findMinMaxTopView(struct node *node, struct list *head, int *min, int *maxm, int hd);
+struct list *findMinMaxBottomView(struct node *node, struct list *head, int *min, int *maxm, int hd);
+void printViews(struct list *head);
 
 int main()
 {
+    printf("BINARY TREE\n\n");	
     struct node *root[10],*temp;
     int choice,data,nodedata,item,sum,res,i,r,r1,r2,data1,data2;
     for(i=0;i<10;i++)
@@ -67,7 +78,7 @@ int main()
         printf("8 to count no. of nodes\n9 to print tree top view data\n10 to find the height of a node\n11 to find the maximum data in tree");
         printf("\n12 to delete a given node \n13 to check root to leaf sum is present or not\n14 to check if tree is BST or not");
         printf("\n15 for Morris Inorder Traversal\n16 to check if two binary tree is same or not\n17 to find least common ancestor\n");
-        printf("18 to check for mirror image trees\n19 to find diameter of a tree\n20 to clone a BST\n\n");
+        printf("18 to check for mirror image trees\n19 to find diameter of a tree\n20 to clone a BST\n21 to print Views of tree\n\n");
         scanf("%d",&choice);
         switch(choice)
         {
@@ -129,7 +140,7 @@ int main()
             scanf("%d",&nodedata);
             printf("\nenter new data\n");
             scanf("%d",&data);
-            root[r-1]=addafterasleftchild(root,nodedata,data);
+            root[r-1]=addafterasleftchild(root[r-1],nodedata,data);
             printf("\n");
             break;
         case 7:
@@ -249,6 +260,13 @@ int main()
             scanf("%d",&r);
             root[9]=Tree_clone(root[r-1]);
             levelorder(root[9]);
+            break;
+        case 21:
+            c=0;
+            printf("\nEnter tree root no. for viewing\n");
+            scanf("%d",&r);
+            View_Tree(root[r-1]);
+            printf("\n");
             break;
         default:
             printf("\nyou entered wrong a choice\n\n");
@@ -1009,4 +1027,122 @@ struct node *Tree_clone(struct node* root)
     temp->lchild=Tree_clone(root->lchild);
     temp->rchild=Tree_clone(root->rchild);
     return temp;
+}
+
+void View_Tree(struct node *root)
+{
+	int min = 0, maxm = 0, choice;
+	struct list *head;
+	printf("\nEnter \n1 for top View\n2 for bottom view\n");
+	scanf("%d",&choice);
+	switch(choice)
+	{
+    case 1:
+        head=NULL;
+        printf("\ntop view is : ");
+        head=findMinMaxTopView(root, head, &min, &maxm, 0);
+        printViews(head);
+        printf("\n");
+        break;
+    case 2:
+        head=NULL;
+        printf("\nbottom view is : ");
+        head=findMinMaxBottomView(root, head, &min, &maxm, 0);
+        printViews(head);
+        printf("\n");
+        break;
+    default:
+        printf("\nyou entered a wrong choice\n");
+	}
+}
+struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, int *maxm, int hd)
+{
+    struct list* curr;
+	if (root == NULL) return head;
+	if(c==0)
+	{
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->next=head;
+	    head=temp;
+	    c++;
+	}
+	if (hd < *min)
+	{
+	    *min = hd;
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->next=head;
+	    head=temp;
+	}
+	else if (hd > *maxm)
+	{
+	    *maxm = hd;
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    curr=head;
+	    while(curr->next!=NULL)
+	        curr=curr->next;
+	    curr->next=temp;
+	    temp->next=NULL;
+	}
+	head=findMinMaxTopView(root->lchild, head, min, maxm, hd-1);
+	head=findMinMaxTopView(root->rchild, head, min, maxm, hd+1);
+	return head;
+}
+
+struct list *findMinMaxBottomView(struct node *root, struct list *head, int *min, int *maxm, int hd)
+{
+    struct list* curr;
+	if (root == NULL) return head;
+	if(c==0)
+	{
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->next=head;
+	    head=temp;
+	    c++;
+	}
+	if (hd < *min)
+	{
+	    *min = hd;
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->next=head;
+	    head=temp;
+	}
+	else if (hd > *maxm)
+	{
+	    *maxm = hd;
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    curr=head;
+	    while(curr->next!=NULL)
+	        curr=curr->next;
+	    curr->next=temp;
+	    temp->next=NULL;
+	}
+	else
+    {
+        curr=head;
+	    int z=*min;
+	    while(z!=hd)
+	    {
+	        z++;
+	        curr=curr->next;
+	    }
+	    curr->val=root->data;
+    }
+	head=findMinMaxBottomView(root->lchild, head, min, maxm, hd-1);
+	head=findMinMaxBottomView(root->rchild, head, min, maxm, hd+1);
+	return head;
+}
+
+void printViews(struct list *head)
+{
+    while(head!=NULL)
+    {
+        printf("%d ",head->val);
+        head=head->next;
+    }
 }

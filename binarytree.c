@@ -1102,6 +1102,7 @@ struct node *Tree_clone(struct node* root)
     return temp;
 }
 
+
 void View_Tree(struct node *root)
 {
 	int min = 0, maxm = 0, choice;
@@ -1128,6 +1129,7 @@ void View_Tree(struct node *root)
         printf("\nyou entered a wrong choice\n");
 	}
 }
+
 struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, int *maxm, int hd, int lv)
 {
     struct list* curr;

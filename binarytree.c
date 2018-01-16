@@ -16,6 +16,7 @@ struct node *rchild;
 struct list
 {
 	int val;
+	int levl;
 	struct list *next;
 };
 
@@ -60,8 +61,8 @@ int diameter(struct node *root);
 int Max(int x, int y);
 struct node *Tree_clone(struct node* root);
 void View_Tree(struct node *root);
-struct list *findMinMaxTopView(struct node *node, struct list *head, int *min, int *maxm, int hd);
-struct list *findMinMaxBottomView(struct node *node, struct list *head, int *min, int *maxm, int hd);
+struct list *findMinMaxTopView(struct node *node, struct list *head, int *min, int *maxm, int hd, int lv);
+struct list *findMinMaxBottomView(struct node *node, struct list *head, int *min, int *maxm, int hd, int lv);
 void printViews(struct list *head);
 
 int main()
@@ -546,7 +547,6 @@ void levelbylevelorderedprinting(struct node *root)
 }
 */
 
-
 /*
 //right view algorithm
 void rightview(struct node *root)
@@ -617,6 +617,7 @@ void rightview(struct node *root)
     }
 }
 */
+
 
 
 /*
@@ -693,7 +694,7 @@ void spiralorderprinting(struct node *root)
             if(curr->lchild)
                 push(s1,curr->lchild);
         }
-
+        printf("\n");
     }
 }
 */
@@ -1112,14 +1113,14 @@ void View_Tree(struct node *root)
     case 1:
         head=NULL;
         printf("\ntop view is : ");
-        head=findMinMaxTopView(root, head, &min, &maxm, 0);
+        head=findMinMaxTopView(root, head, &min, &maxm, 0, 0);
         printViews(head);
         printf("\n");
         break;
     case 2:
         head=NULL;
         printf("\nbottom view is : ");
-        head=findMinMaxBottomView(root, head, &min, &maxm, 0);
+        head=findMinMaxBottomView(root, head, &min, &maxm, 0, 0);
         printViews(head);
         printf("\n");
         break;
@@ -1127,7 +1128,7 @@ void View_Tree(struct node *root)
         printf("\nyou entered a wrong choice\n");
 	}
 }
-struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, int *maxm, int hd)
+struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, int *maxm, int hd, int lv)
 {
     struct list* curr;
 	if (root == NULL) return head;
@@ -1135,6 +1136,7 @@ struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, i
 	{
 	    struct list *temp=(struct list*)malloc(sizeof(struct list));
 	    temp->val=root->data;
+	    temp->levl=lv;
 	    temp->next=head;
 	    head=temp;
 	    c++;
@@ -1144,6 +1146,7 @@ struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, i
 	    *min = hd;
 	    struct list *temp=(struct list*)malloc(sizeof(struct list));
 	    temp->val=root->data;
+	    temp->levl=lv;
 	    temp->next=head;
 	    head=temp;
 	}
@@ -1152,42 +1155,7 @@ struct list *findMinMaxTopView(struct node *root, struct list *head, int *min, i
 	    *maxm = hd;
 	    struct list *temp=(struct list*)malloc(sizeof(struct list));
 	    temp->val=root->data;
-	    curr=head;
-	    while(curr->next!=NULL)
-	        curr=curr->next;
-	    curr->next=temp;
-	    temp->next=NULL;
-	}
-	head=findMinMaxTopView(root->lchild, head, min, maxm, hd-1);
-	head=findMinMaxTopView(root->rchild, head, min, maxm, hd+1);
-	return head;
-}
-
-struct list *findMinMaxBottomView(struct node *root, struct list *head, int *min, int *maxm, int hd)
-{
-    struct list* curr;
-	if (root == NULL) return head;
-	if(c==0)
-	{
-	    struct list *temp=(struct list*)malloc(sizeof(struct list));
-	    temp->val=root->data;
-	    temp->next=head;
-	    head=temp;
-	    c++;
-	}
-	if (hd < *min)
-	{
-	    *min = hd;
-	    struct list *temp=(struct list*)malloc(sizeof(struct list));
-	    temp->val=root->data;
-	    temp->next=head;
-	    head=temp;
-	}
-	else if (hd > *maxm)
-	{
-	    *maxm = hd;
-	    struct list *temp=(struct list*)malloc(sizeof(struct list));
-	    temp->val=root->data;
+	    temp->levl=lv;
 	    curr=head;
 	    while(curr->next!=NULL)
 	        curr=curr->next;
@@ -1203,10 +1171,68 @@ struct list *findMinMaxBottomView(struct node *root, struct list *head, int *min
 	        z++;
 	        curr=curr->next;
 	    }
-	    curr->val=root->data;
+	    if(lv<curr->levl)
+        {
+            curr->val=root->data;
+            curr->levl=lv;
+        }
     }
-	head=findMinMaxBottomView(root->lchild, head, min, maxm, hd-1);
-	head=findMinMaxBottomView(root->rchild, head, min, maxm, hd+1);
+	head=findMinMaxTopView(root->lchild, head, min, maxm, hd-1, lv+1);
+	head=findMinMaxTopView(root->rchild, head, min, maxm, hd+1, lv+1);
+	return head;
+}
+
+struct list *findMinMaxBottomView(struct node *root, struct list *head, int *min, int *maxm, int hd, int lv)
+{
+    struct list* curr;
+	if (root == NULL) return head;
+	if(c==0)
+	{
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->levl=lv;
+	    temp->next=head;
+	    head=temp;
+	    c++;
+	}
+	if (hd < *min)
+	{
+	    *min = hd;
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->levl=lv;
+	    temp->next=head;
+	    head=temp;
+	}
+	else if (hd > *maxm)
+	{
+	    *maxm = hd;
+	    struct list *temp=(struct list*)malloc(sizeof(struct list));
+	    temp->val=root->data;
+	    temp->levl=lv;
+	    curr=head;
+	    while(curr->next!=NULL)
+	        curr=curr->next;
+	    curr->next=temp;
+	    temp->next=NULL;
+	}
+	else
+    {
+        curr=head;
+	    int z=*min;
+	    while(z!=hd)
+	    {
+	        z++;
+	        curr=curr->next;
+	    }
+	    if(lv>curr->levl)
+        {
+            curr->val=root->data;
+            curr->levl=lv;
+        }
+    }
+	head=findMinMaxBottomView(root->lchild, head, min, maxm, hd-1, lv+1);
+	head=findMinMaxBottomView(root->rchild, head, min, maxm, hd+1, lv+1);
 	return head;
 }
 

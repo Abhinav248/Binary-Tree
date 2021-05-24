@@ -7,14 +7,19 @@ public class MyBinaryTree {
     public static void main(String[] args) {
         TreeNode root = null;
         root = buildTree(root);
-        System.out.print("Inorder Tree Traversal: ");
+        System.out.print("\nInorder Tree Traversal: ");
         recursiveInorder(root);
-        System.out.println();
-        System.out.print("Preorder Tree Traversal: ");
+        System.out.print("\nPreorder Tree Traversal: ");
         recursivePreorder(root);
-        System.out.println();
-        System.out.print("Postorder Tree Traversal: ");
+        System.out.print("\nPostorder Tree Traversal: ");
         recursivePostorder(root);
+        System.out.println();
+        System.out.println("BT size = " + size(root));
+        System.out.println("BT height = " + height(root));
+        Stack<Integer> s = new Stack<>();
+        if(pathRootToLeafSum(root, 10, s)) {
+            System.out.println("Path Stack: " + s);
+        }
     }
 
     public static TreeNode buildTree(TreeNode root) {
@@ -52,6 +57,25 @@ public class MyBinaryTree {
             recursivePostorder(root.getLeft());
             recursivePostorder(root.getRight());
         }
+    }
+
+    public static boolean searchNode(TreeNode root, TreeNode keyNode){
+        if(root==null && keyNode!=null)
+            return false;
+        if(root==keyNode)
+            return true;
+        return searchNode(root.getLeft(), keyNode) || searchNode(root.getRight(), keyNode);
+    }
+
+    public static TreeNode searchValue(TreeNode root, int keyValue){
+        if(root==null)
+            return null;
+        if(root.getVal()==keyValue)
+            return root;
+        else if(searchValue(root.getLeft(), keyValue)!=null)
+            return searchValue(root.getLeft(), keyValue);
+        else
+            return searchValue(root.getRight(), keyValue);
     }
 
     public static List<Integer> inorderTraversal(TreeNode root) {
@@ -233,6 +257,88 @@ public class MyBinaryTree {
             i.clear();
         }
         return l;
+    }
+
+    public static boolean verifySameBinaryTree(TreeNode root1, TreeNode root2) {
+        if(root1 == null && root2 == null)
+            return true;
+        else if(root1 == null || root2 == null)
+            return false;
+        else if(root1.getVal()==root2.getVal())
+            return true;
+        else
+            return  (root1.getVal()==root2.getVal()) &&
+                    (verifySameBinaryTree(root1.getLeft(), root2.getLeft())) &&
+                    (verifySameBinaryTree(root1.getRight(), root2.getRight()));
+    }
+
+    public static int size(TreeNode root) {
+        return (root==null)?0:(1+size(root.getLeft())+size(root.getRight()));
+    }
+
+    public static int height(TreeNode root) {
+        return (root==null)?0:(1+Math.max(height(root.getLeft()), height(root.getRight())));
+    }
+
+    public static int diameter(TreeNode root) {
+        return 0;
+    }
+
+    public static boolean hasPathSum(TreeNode root, int sum) {
+        /*if(root==null && sum==0)
+            return true;*/
+        if(root==null)
+            return false;
+        if(isLeafNode(root) && root.getVal()==sum)
+            return true;
+        return hasPathSum(root.getLeft(), sum-root.getVal()) ||
+                hasPathSum(root.getRight(), sum-root.getVal());
+    }
+
+    public static boolean isLeafNode(TreeNode node) {
+        if(node !=null && node.getLeft()==null & node.getRight()==null)
+            return true;
+        return false;
+    }
+
+    public static boolean pathRootToLeafSum(TreeNode root, int sum, Stack<Integer> s) {
+        if (root != null && ((root.getLeft()==null && root.getRight() == null && root.getVal()==sum) ||
+                pathRootToLeafSum(root.getLeft(), sum-root.getVal(), s) ||
+                pathRootToLeafSum(root.getRight(), sum-root.getVal(), s))) {
+            s.push(root.getVal());
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isValidBST(TreeNode root) {
+        if(isBST(root, Long.MIN_VALUE, Long.MAX_VALUE))
+            return true;
+        return false;
+    }
+
+    public static boolean isBST(TreeNode root, long min, long max) {
+        if(root==null)
+            return true;
+        if(root.getVal()<=min || root.getVal()>=max)
+            return false;
+        return isBST(root.getLeft(), min, root.getVal()) &&
+                isBST(root.getRight(), root.getVal(), max);
+    }
+
+    /* Assumptions for LCA Problem:
+       All Node.val are unique.
+       p!=q
+       p and q will exist in the BST. */
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null || root.getVal()==p.getVal() || root.getVal()==q.getVal())
+            return root;
+        TreeNode lft=lowestCommonAncestor(root.getLeft(), p, q);
+        TreeNode rht=lowestCommonAncestor(root.getRight(), p, q);
+        if(lft!=null && rht!=null)
+            return root;
+        return (lft!=null)?lft:rht;
     }
 
 }

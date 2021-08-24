@@ -360,5 +360,52 @@ public class MyBinaryTree {
         root.right=constructTree(preorder, pstart+i-istart+1, pend, inorder, i+1, iend);
         return root;
     }
+    
+    // https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+    // Method 1 -->
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        
+        int p_len=postorder.length;
+        int i_len=inorder.length;
+        return constructTree(postorder, 0, p_len-1, inorder, 0, i_len-1);
+    }
+    public TreeNode constructTree(int[] postorder, int pstart, int pend, int[] inorder, int istart, int iend) {
+        if(istart>iend || pstart>pend)
+            return null;
+        int i;
+        int data=postorder[pend];
+        TreeNode root = new TreeNode(data);
+        for(i=istart;i<iend;i++)
+            if(data==inorder[i])
+                break;
+        root.left=constructTree(postorder, pstart, pstart+i-istart-1, inorder, istart, i-1);
+        root.right=constructTree(postorder, pstart+i-istart, pend-1, inorder, i+1, iend);
+        return root;
+    }
+    // Method 2 -->
+    static int postorderIdx;
+    Map<Integer,Integer> inorderMap;
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        inorderMap = new HashMap<>();
+        postorderIdx = postorder.length -1;
+        for(int i=0;i<inorder.length ;i++)
+        {
+            inorderMap.put(inorder[i],i);
+        }
+        
+        TreeNode root = buildTreeHelper(inorder , postorder, 0 , inorder.length -1);
+        return root;
+    }
+    private TreeNode buildTreeHelper(int[] inorder, int[] postorder, int start , int end) {
+        if(start>end) return null;
+        int rootValue = postorder[postorderIdx--];
+        
+        TreeNode root = new TreeNode(rootValue);
+        
+        root.right = buildTreeHelper(inorder , postorder , inorderMap.get(rootValue) +1,end);
+        root.left = buildTreeHelper(inorder , postorder ,start, inorderMap.get(rootValue) -1);
+        
+        return root;
+    }
 
 }

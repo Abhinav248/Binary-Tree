@@ -409,3 +409,26 @@ public class MyBinaryTree {
     }
 
 }
+
+// https://leetcode.com/problems/diameter-of-binary-tree/
+class Solution {
+    int max_result=0; //Global variable
+    
+    public int diameterOfBinaryTree(TreeNode root) {
+        maxDepth(root);
+        return max_result;
+    }
+    
+    // This function will keep on modifying the global variable max_result
+    private int maxDepth(TreeNode root) {
+        if (root == null) return 0;
+        
+        int left = maxDepth(root.left);
+        int right = maxDepth(root.right);
+        
+        //Global variable
+        max_result = Math.max(max_result, left + right);
+        
+        return Math.max(left, right) + 1;
+    }
+}

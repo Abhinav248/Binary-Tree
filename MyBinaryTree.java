@@ -344,7 +344,7 @@ public class MyBinaryTree {
     // https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
     public TreeNode buildTree(int[] preorder, int[] inorder) {
         int p_len=preorder.length;
-        int i_len=preorder.length;
+        int i_len=inorder.length;
         return constructTree(preorder, 0, p_len-1, inorder, 0, i_len-1);
     }
     public TreeNode constructTree(int[] preorder, int pstart, int pend, int[] inorder, int istart, int iend) {

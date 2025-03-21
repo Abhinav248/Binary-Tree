@@ -301,6 +301,8 @@ public class MyBinaryTree {
         return false;
     }
 
+    //Q1 - https://leetcode.com/problems/path-sum/description/ 
+    //Q2 - https://leetcode.com/problems/path-sum-ii/description/
     public static boolean pathRootToLeafSum(TreeNode root, int sum, Stack<Integer> s) {
         if (root != null && ((root.getLeft()==null && root.getRight() == null && root.getVal()==sum) ||
                 pathRootToLeafSum(root.getLeft(), sum-root.getVal(), s) ||
